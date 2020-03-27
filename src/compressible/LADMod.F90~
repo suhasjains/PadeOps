@@ -462,13 +462,14 @@ contains
 
 
     ! Eulerian-Almansi strain version
-    subroutine get_diff_g(this,g,g_t,g_p,sos,diff_g,diff_gt,diff_gp,use_gTg,strainHard, x_bc,y_bc,z_bc)
+    subroutine get_diff_g(this,g,g_t,g_p,sos,diff_g,diff_gt,diff_gp,use_gTg, x_bc,y_bc,z_bc)
         class(ladobject),  intent(in) :: this
         !real(rkind), dimension(this%decomp%ysz(1),this%decomp%ysz(2),this%decomp%ysz(3)), intent(in)   :: rho,e,T,sos
         real(rkind), dimension(this%decomp%ysz(1),this%decomp%ysz(2),this%decomp%ysz(3),9), intent(in)  :: g,g_t,g_p
         real(rkind), dimension(this%decomp%ysz(1),this%decomp%ysz(2),this%decomp%ysz(3)), intent(in)    :: sos
         real(rkind), dimension(this%decomp%ysz(1),this%decomp%ysz(2),this%decomp%ysz(3)), intent(inout) :: diff_g,diff_gt,diff_gp
         integer, dimension(2), intent(in) :: x_bc, y_bc, z_bc
+        !logical, intent(in) :: strainHard
 
         real(rkind), dimension(this%decomp%ysz(1),this%decomp%ysz(2),this%decomp%ysz(3)) :: diffstar_g,e_g,e_gt,e_gp
         real(rkind), dimension(this%decomp%xsz(1),this%decomp%xsz(2),this%decomp%xsz(3)) :: xtmp1,xtmp2
@@ -477,17 +478,12 @@ contains
 
         integer :: n
 
-        logical, intent(in) :: use_gTg,strainHard
-
-        diff_g  = zero
-        diff_gt = zero
-        diff_gp = zero
+        logical, intent(in) :: use_gTg
 
         ! -------- g_e diffusivity --------
         ! !Eulerian-Almansi strain tensor: ea = (I-(g_e)^T.g_e)/2 --- not explicitly calculated
         ! !strain norm: e_g = sqrt(2/3*ea_ij*ea_ij)
-        !if (use_gTg) then
-        if ((use_gTg).and.(.not. strainHard)) then
+        if (this%use_gTg) then
            e_g = sqrt(( (1.0d0 - g(:,:,:,1))**2 + g(:,:,:,2)**2 + g(:,:,:,3)**2 + g(:,:,:,4)**2 + (1.0d0 - g(:,:,:,5))**2 + g(:,:,:,6)**2 + g(:,:,:,7)**2 + g(:,:,:,8)**2 + (1.0d0 - g(:,:,:,9))**2 )/6.0d0)
         else
            e_g = sqrt( ( (1.0d0 - g(:,:,:,1)**2 - g(:,:,:,4)**2 - g(:,:,:,7)**2)**2 + (1.0d0 - g(:,:,:,2)**2 - g(:,:,:,5)**2 - g(:,:,:,8)**2)**2 + (1.0d0 - g(:,:,:,3)**2 - g(:,:,:,6)**2 - g(:,:,:,9)**2)**2 )/6.0d0 + ( (-g(:,:,:,1)*g(:,:,:,2) - g(:,:,:,4)*g(:,:,:,5) - g(:,:,:,7)*g(:,:,:,8))**2 + (-g(:,:,:,1)*g(:,:,:,3) - g(:,:,:,4)*g(:,:,:,6) - g(:,:,:,7)*g(:,:,:,9))**2 + (-g(:,:,:,2)*g(:,:,:,3) - g(:,:,:,5)*g(:,:,:,6) - g(:,:,:,8)*g(:,:,:,9))**2 )/3.0d0 )
@@ -533,8 +529,8 @@ contains
         ! -------- g_t diffusivity --------
         ! !Eulerian-Almansi strain tensor: ea = (I-(g_t)^T.g_t)/2 --- not explicitly calculated
         ! !strain norm: e_gt = sqrt(2/3*ea_ij*ea_ij)
-        if(strainHard) then
-           if (use_gTg) then
+        !if(this%strainHard) then
+           if (this%use_gTg) then
               e_gt = sqrt(( (1.0d0 - g_t(:,:,:,1))**2 + g_t(:,:,:,2)**2 + g_t(:,:,:,3)**2 + g_t(:,:,:,4)**2 + (1.0d0 - g_t(:,:,:,5))**2 + g_t(:,:,:,6)**2 + g_t(:,:,:,7)**2 + g_t(:,:,:,8)**2 + (1.0d0 - g_t(:,:,:,9))**2 )/6.0d0)
            else
               e_gt = sqrt( ( (1.0d0 - g_t(:,:,:,1)**2 - g_t(:,:,:,4)**2 - g_t(:,:,:,7)**2)**2 + (1.0d0 - g_t(:,:,:,2)**2 - g_t(:,:,:,5)**2 - g_t(:,:,:,8)**2)**2 + (1.0d0 - g_t(:,:,:,3)**2 - g_t(:,:,:,6)**2 - g_t(:,:,:,9)**2)**2 )/6.0d0 + ( (-g_t(:,:,:,1)*g_t(:,:,:,2) - g_t(:,:,:,4)*g_t(:,:,:,5) - g_t(:,:,:,7)*g_t(:,:,:,8))**2 + (-g_t(:,:,:,1)*g_t(:,:,:,3) - g_t(:,:,:,4)*g_t(:,:,:,6) - g_t(:,:,:,7)*g_t(:,:,:,9))**2 + (-g_t(:,:,:,2)*g_t(:,:,:,3) - g_t(:,:,:,5)*g_t(:,:,:,6) - g_t(:,:,:,8)*g_t(:,:,:,9))**2 )/3.0d0 )
@@ -575,7 +571,7 @@ contains
            call this%filter(diffstar_g, x_bc, y_bc, z_bc)
 
            diff_gt = diff_gt + diffstar_g
-
+        !endif
 
            !!print*,this%Cdiff_g,this%Cdiff_gt,maxval(sos)
            
@@ -587,8 +583,8 @@ contains
         ! -------- g_p diffusivity --------
         ! !Eulerian-Almansi strain tensor: ea = (I-(g_p)^T.g_p)/2 --- not explicitly calculated
         ! !strain norm: e_gp = sqrt(2/3*ea_ij*ea_ij)
-
-           if (use_gTg) then
+        !if(this%strainHard) then
+           if (this%use_gTg) then
               e_gp = sqrt(( (1.0d0 - g_p(:,:,:,1))**2 + g_p(:,:,:,2)**2 + g_p(:,:,:,3)**2 + g_p(:,:,:,4)**2 + (1.0d0 - g_p(:,:,:,5))**2 + g_p(:,:,:,6)**2 + g_p(:,:,:,7)**2 + g_p(:,:,:,8)**2 + (1.0d0 - g_p(:,:,:,9))**2 )/6.0d0)
            else
               e_gp = sqrt( ( (1.0d0 - g_p(:,:,:,1)**2 - g_p(:,:,:,4)**2 - g_p(:,:,:,7)**2)**2 + (1.0d0 - g_p(:,:,:,2)**2 - g_p(:,:,:,5)**2 - g_p(:,:,:,8)**2)**2 + (1.0d0 - g_p(:,:,:,3)**2 - g_p(:,:,:,6)**2 - g_p(:,:,:,9)**2)**2 )/6.0d0 + ( (-g_p(:,:,:,1)*g_p(:,:,:,2) - g_p(:,:,:,4)*g_p(:,:,:,5) - g_p(:,:,:,7)*g_p(:,:,:,8))**2 + (-g_p(:,:,:,1)*g_p(:,:,:,3) - g_p(:,:,:,4)*g_p(:,:,:,6) - g_p(:,:,:,7)*g_p(:,:,:,9))**2 + (-g_p(:,:,:,2)*g_p(:,:,:,3) - g_p(:,:,:,5)*g_p(:,:,:,6) - g_p(:,:,:,8)*g_p(:,:,:,9))**2 )/3.0d0 )
@@ -629,7 +625,7 @@ contains
            call this%filter(diffstar_g, x_bc, y_bc, z_bc)
 
            diff_gp = diff_gp + diffstar_g
-        endif
+        !endif
 
            !!print*,this%Cdiff_g,this%Cdiff_gt,maxval(sos)
            
