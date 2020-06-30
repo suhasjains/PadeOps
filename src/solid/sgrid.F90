@@ -544,6 +544,7 @@ contains
         use timer,      only: tic, toc
         use exits,      only: GracefulExit, message, check_exit
         use decomp_2d,  only: nrank
+        use constants,  only: half
         class(sgrid), target, intent(inout) :: this
 
         logical :: tcond, vizcond, stepcond
@@ -552,7 +553,7 @@ contains
         real(rkind), dimension(:,:,:,:), allocatable, target :: duidxj
         real(rkind), dimension(:,:,:), pointer :: dudx,dudy,dudz,dvdx,dvdy,dvdz,dwdx,dwdy,dwdz
         real(rkind), dimension(:,:,:), pointer :: ehmix
-        integer :: i, imat
+        integer :: i, imat,j,k
 
         allocate( duidxj(this%nxp, this%nyp, this%nzp, 9) )
         ! Get artificial properties for initial conditions

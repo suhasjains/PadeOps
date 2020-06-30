@@ -1880,8 +1880,8 @@ contains
         !LAD terms
         call divergence(this%decomp,this%der,this%diff_pe*LADg(:,:,:,1),this%diff_pe*LADg(:,:,:,2),this%diff_pe*LADg(:,:,:,3),tmp, -x_bc, -y_bc, -z_bc)
         rhspe = rhspe + tmp
-
-        rhspe = rhspe / this%T
+        
+        !rhspe = rhspe / this%T
 
         if (this%plast) then
            if(this%explPlast) then
@@ -4191,8 +4191,8 @@ contains
         end if
         if ( nancheck(this%g_p,i,j,k,l) ) then
            write(charout,'(A,5(I0,A))') "NaN encountered in material ", imat,&
-                &" at (",i,", ",j,", ",k,", ",l,") of g_t"
-           !print*,'g_t NaN'
+                &" at (",i,", ",j,", ",k,", ",l,") of g_p"
+           !print*,'g_p NaN'
            call GracefulExit(charout,4809)
         end if
         if ( nancheck(this%pe,i,j,k) ) then

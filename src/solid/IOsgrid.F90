@@ -234,7 +234,8 @@ contains
             E_IO = VTK_VAR_XML(NC_NN=nn,varname='mat'//trim(strz(2,imat))//'_epp',var=tmp1(1:nx2-nx1+1,1:ny2-ny1+1,1:nz2-nz1+1))
             if( allocated(tmp1) ) deallocate(tmp1)
 
-            call update_halo((mix%material(imat)%e_pp-mix%material(imat)%e_pp)/max(mix%material(imat)%e_p,1.0e-16),tmp1,1,gp,.FALSE.)
+            !call update_halo((mix%material(imat)%e_pp-mix%material(imat)%e_p)/max(mix%material(imat)%e_p,1.0e-16),tmp1,1,gp,.FALSE.)
+            call update_halo(mix%material(imat)%e_pp-mix%material(imat)%e_p,tmp1,1,gp,.FALSE.)
             E_IO = VTK_VAR_XML(NC_NN=nn,varname='mat'//trim(strz(2,imat))//'_epdiff',var=tmp1(1:nx2-nx1+1,1:ny2-ny1+1,1:nz2-nz1+1))
             if( allocated(tmp1) ) deallocate(tmp1)
 

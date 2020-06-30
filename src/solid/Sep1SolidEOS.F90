@@ -259,7 +259,7 @@ contains
         real(rkind), dimension(:,:,:), intent(in), optional :: mumix, yieldmix, rho0mix
         real(rkind), dimension(:,:,:), intent(in) :: rho,Temp
 
-        real(rkind), dimension(3,3) :: g, u, vt, gradf, gradf_new,sigma,gpt1,gpt2,geinv,gedlt,gp!,gpdlt!,gpinv!,alms
+        real(rkind), dimension(3,3) :: g, u, vt, gradf, gradf_new,sigma,gpt1,gpt2,geinv,gedlt,gp,gpt3,gpt4!,gpdlt!,gpinv!,alms,
         real(rkind), dimension(3)   :: sval, beta, Sa, f, f1, f2, dbeta, beta_new, dbeta_new
         real(rkind) :: sqrt_om, betasum, Sabymu_sq, ycrit, C0, t
         real(rkind) :: tol = real(1.D-12,rkind), residual, residual_new
@@ -520,53 +520,160 @@ contains
 
 
                        if (use_gTg) then
-                          !(j,m) or (i,m)
-                          gpt1(1,1) = gpfull(i,j,k,1)*gedlt(1,1) + gpfull(i,j,k,4)*gedlt(2,1) + gpfull(i,j,k,7)*gedlt(3,1) 
-                          gpt1(1,2) = gpfull(i,j,k,1)*gedlt(1,2) + gpfull(i,j,k,4)*gedlt(2,2) + gpfull(i,j,k,7)*gedlt(3,2) 
-                          gpt1(1,3) = gpfull(i,j,k,1)*gedlt(1,3) + gpfull(i,j,k,4)*gedlt(2,3) + gpfull(i,j,k,7)*gedlt(3,3) 
+                          ! !old: close but needs improvment
+                          ! !(j,m) or (i,m)
+                          ! gpt1(1,1) = gpfull(i,j,k,1)*gedlt(1,1) + gpfull(i,j,k,4)*gedlt(2,1) + gpfull(i,j,k,7)*gedlt(3,1) 
+                          ! gpt1(1,2) = gpfull(i,j,k,1)*gedlt(1,2) + gpfull(i,j,k,4)*gedlt(2,2) + gpfull(i,j,k,7)*gedlt(3,2) 
+                          ! gpt1(1,3) = gpfull(i,j,k,1)*gedlt(1,3) + gpfull(i,j,k,4)*gedlt(2,3) + gpfull(i,j,k,7)*gedlt(3,3) 
 
-                          gpt1(2,1) = gpfull(i,j,k,2)*gedlt(1,1) + gpfull(i,j,k,5)*gedlt(2,1) + gpfull(i,j,k,8)*gedlt(3,1) 
-                          gpt1(2,2) = gpfull(i,j,k,2)*gedlt(1,2) + gpfull(i,j,k,5)*gedlt(2,2) + gpfull(i,j,k,8)*gedlt(3,2) 
-                          gpt1(2,3) = gpfull(i,j,k,2)*gedlt(1,3) + gpfull(i,j,k,5)*gedlt(2,3) + gpfull(i,j,k,8)*gedlt(3,3) 
+                          ! gpt1(2,1) = gpfull(i,j,k,2)*gedlt(1,1) + gpfull(i,j,k,5)*gedlt(2,1) + gpfull(i,j,k,8)*gedlt(3,1) 
+                          ! gpt1(2,2) = gpfull(i,j,k,2)*gedlt(1,2) + gpfull(i,j,k,5)*gedlt(2,2) + gpfull(i,j,k,8)*gedlt(3,2) 
+                          ! gpt1(2,3) = gpfull(i,j,k,2)*gedlt(1,3) + gpfull(i,j,k,5)*gedlt(2,3) + gpfull(i,j,k,8)*gedlt(3,3) 
 
-                          gpt1(3,1) = gpfull(i,j,k,3)*gedlt(1,1) + gpfull(i,j,k,6)*gedlt(2,1) + gpfull(i,j,k,9)*gedlt(3,1) 
-                          gpt1(3,2) = gpfull(i,j,k,3)*gedlt(1,2) + gpfull(i,j,k,6)*gedlt(2,2) + gpfull(i,j,k,9)*gedlt(3,2) 
-                          gpt1(3,3) = gpfull(i,j,k,3)*gedlt(1,3) + gpfull(i,j,k,6)*gedlt(2,3) + gpfull(i,j,k,9)*gedlt(3,3) 
+                          ! gpt1(3,1) = gpfull(i,j,k,3)*gedlt(1,1) + gpfull(i,j,k,6)*gedlt(2,1) + gpfull(i,j,k,9)*gedlt(3,1) 
+                          ! gpt1(3,2) = gpfull(i,j,k,3)*gedlt(1,2) + gpfull(i,j,k,6)*gedlt(2,2) + gpfull(i,j,k,9)*gedlt(3,2) 
+                          ! gpt1(3,3) = gpfull(i,j,k,3)*gedlt(1,3) + gpfull(i,j,k,6)*gedlt(2,3) + gpfull(i,j,k,9)*gedlt(3,3) 
 
 
-                          gpt2(1,1) =    2.0*(gpt1(1,1)*geinv(1,1) + gpt1(1,2)*geinv(2,1) + gpt1(1,3)*geinv(3,1))
+                          ! gpt2(1,1) =    2.0*(gpt1(1,1)*geinv(1,1) + gpt1(1,2)*geinv(2,1) + gpt1(1,3)*geinv(3,1))
 
-                          gpt2(1,2) =    (gpt1(1,1)*geinv(1,2) + gpt1(1,2)*geinv(2,2) + gpt1(1,3)*geinv(3,2)) &
-                                       + (gpt1(2,1)*geinv(1,1) + gpt1(2,2)*geinv(2,1) + gpt1(2,3)*geinv(3,1))
+                          ! gpt2(1,2) =    (gpt1(1,1)*geinv(1,2) + gpt1(1,2)*geinv(2,2) + gpt1(1,3)*geinv(3,2)) &
+                          !              + (gpt1(2,1)*geinv(1,1) + gpt1(2,2)*geinv(2,1) + gpt1(2,3)*geinv(3,1))
 
-                          gpt2(1,3) =    (gpt1(1,1)*geinv(1,3) + gpt1(1,2)*geinv(2,3) + gpt1(1,3)*geinv(3,3)) &
-                                       + (gpt1(3,1)*geinv(1,1) + gpt1(3,2)*geinv(2,1) + gpt1(3,3)*geinv(3,1))
+                          ! gpt2(1,3) =    (gpt1(1,1)*geinv(1,3) + gpt1(1,2)*geinv(2,3) + gpt1(1,3)*geinv(3,3)) &
+                          !              + (gpt1(3,1)*geinv(1,1) + gpt1(3,2)*geinv(2,1) + gpt1(3,3)*geinv(3,1))
 
-                          gpt2(2,1) =    gpt2(1,2)
+                          ! gpt2(2,1) =    gpt2(1,2)
 
-                          gpt2(2,2) =    2.0*(gpt1(2,1)*geinv(1,2) + gpt1(2,2)*geinv(2,2) + gpt1(2,3)*geinv(3,2))
+                          ! gpt2(2,2) =    2.0*(gpt1(2,1)*geinv(1,2) + gpt1(2,2)*geinv(2,2) + gpt1(2,3)*geinv(3,2))
 
-                          gpt2(2,3) =    (gpt1(2,1)*geinv(1,3) + gpt1(2,2)*geinv(2,3) + gpt1(2,3)*geinv(3,3)) &
-                                       + (gpt1(3,1)*geinv(1,2) + gpt1(3,2)*geinv(2,2) + gpt1(3,3)*geinv(3,2))
+                          ! gpt2(2,3) =    (gpt1(2,1)*geinv(1,3) + gpt1(2,2)*geinv(2,3) + gpt1(2,3)*geinv(3,3)) &
+                          !              + (gpt1(3,1)*geinv(1,2) + gpt1(3,2)*geinv(2,2) + gpt1(3,3)*geinv(3,2))
 
-                          gpt2(3,1) =    gpt2(1,3)                               
+                          ! gpt2(3,1) =    gpt2(1,3)                               
 
-                          gpt2(3,2) =    gpt2(2,3)                               
+                          ! gpt2(3,2) =    gpt2(2,3)                               
 
-                          gpt2(3,3) =    2.0*(gpt1(3,1)*geinv(1,3) + gpt1(3,2)*geinv(2,3) + gpt1(3,3)*geinv(3,3))
+                          ! gpt2(3,3) =    2.0*(gpt1(3,1)*geinv(1,3) + gpt1(3,2)*geinv(2,3) + gpt1(3,3)*geinv(3,3))
+
+
+
+                          !new
+                          gpt1(1,1) = gpfull(i,j,k,1)*gfull(i,j,k,1) + gpfull(i,j,k,4)*gfull(i,j,k,4) + gpfull(i,j,k,7)*gfull(i,j,k,7) 
+                          gpt1(1,2) = gpfull(i,j,k,1)*gfull(i,j,k,2) + gpfull(i,j,k,4)*gfull(i,j,k,5) + gpfull(i,j,k,7)*gfull(i,j,k,8) 
+                          gpt1(1,3) = gpfull(i,j,k,1)*gfull(i,j,k,3) + gpfull(i,j,k,4)*gfull(i,j,k,6) + gpfull(i,j,k,7)*gfull(i,j,k,9) 
+
+                          gpt1(2,1) = gpfull(i,j,k,2)*gfull(i,j,k,1) + gpfull(i,j,k,5)*gfull(i,j,k,4) + gpfull(i,j,k,8)*gfull(i,j,k,7) 
+                          gpt1(2,2) = gpfull(i,j,k,2)*gfull(i,j,k,2) + gpfull(i,j,k,5)*gfull(i,j,k,5) + gpfull(i,j,k,8)*gfull(i,j,k,8) 
+                          gpt1(2,3) = gpfull(i,j,k,2)*gfull(i,j,k,3) + gpfull(i,j,k,5)*gfull(i,j,k,6) + gpfull(i,j,k,8)*gfull(i,j,k,9) 
+
+                          gpt1(3,1) = gpfull(i,j,k,3)*gfull(i,j,k,1) + gpfull(i,j,k,6)*gfull(i,j,k,4) + gpfull(i,j,k,9)*gfull(i,j,k,7) 
+                          gpt1(3,2) = gpfull(i,j,k,3)*gfull(i,j,k,2) + gpfull(i,j,k,6)*gfull(i,j,k,5) + gpfull(i,j,k,9)*gfull(i,j,k,8) 
+                          gpt1(3,3) = gpfull(i,j,k,3)*gfull(i,j,k,3) + gpfull(i,j,k,6)*gfull(i,j,k,6) + gpfull(i,j,k,9)*gfull(i,j,k,9) 
+
+
+                          gpt2(1,1) = gpt1(1,1)*gfull(i,j,k,1) + gpt1(2,1)*gfull(i,j,k,4) + gpt1(3,1)*gfull(i,j,k,7) 
+                          gpt2(1,2) = gpt1(1,1)*gfull(i,j,k,2) + gpt1(2,1)*gfull(i,j,k,5) + gpt1(3,1)*gfull(i,j,k,8) 
+                          gpt2(1,3) = gpt1(1,1)*gfull(i,j,k,3) + gpt1(2,1)*gfull(i,j,k,6) + gpt1(3,1)*gfull(i,j,k,9)
+ 
+                          gpt2(2,1) = gpt1(1,2)*gfull(i,j,k,1) + gpt1(2,2)*gfull(i,j,k,4) + gpt1(3,2)*gfull(i,j,k,7) 
+                          gpt2(2,2) = gpt1(1,2)*gfull(i,j,k,2) + gpt1(2,2)*gfull(i,j,k,5) + gpt1(3,2)*gfull(i,j,k,8) 
+                          gpt2(2,3) = gpt1(1,2)*gfull(i,j,k,3) + gpt1(2,2)*gfull(i,j,k,6) + gpt1(3,2)*gfull(i,j,k,9) 
+
+                          gpt2(3,1) = gpt1(1,3)*gfull(i,j,k,1) + gpt1(2,3)*gfull(i,j,k,4) + gpt1(3,3)*gfull(i,j,k,7) 
+                          gpt2(3,2) = gpt1(1,3)*gfull(i,j,k,2) + gpt1(2,3)*gfull(i,j,k,5) + gpt1(3,3)*gfull(i,j,k,8) 
+                          gpt2(3,3) = gpt1(1,3)*gfull(i,j,k,3) + gpt1(2,3)*gfull(i,j,k,6) + gpt1(3,3)*gfull(i,j,k,9) 
+
+
+                          gpt3(1,1) = geinv(1,1)*gpt2(1,1) + geinv(2,1)*gpt2(2,1) + geinv(3,1)*gpt2(3,1) 
+                          gpt3(1,2) = geinv(1,1)*gpt2(1,2) + geinv(2,1)*gpt2(2,2) + geinv(3,1)*gpt2(3,2) 
+                          gpt3(1,3) = geinv(1,1)*gpt2(1,3) + geinv(2,1)*gpt2(2,3) + geinv(3,1)*gpt2(3,3)
+ 
+                          gpt3(2,1) = geinv(1,2)*gpt2(1,1) + geinv(2,2)*gpt2(2,1) + geinv(3,2)*gpt2(3,1) 
+                          gpt3(2,2) = geinv(1,2)*gpt2(1,2) + geinv(2,2)*gpt2(2,2) + geinv(3,2)*gpt2(3,2) 
+                          gpt3(2,3) = geinv(1,2)*gpt2(1,3) + geinv(2,2)*gpt2(2,3) + geinv(3,2)*gpt2(3,3) 
+
+                          gpt3(3,1) = geinv(1,3)*gpt2(1,1) + geinv(2,3)*gpt2(2,1) + geinv(3,3)*gpt2(3,1) 
+                          gpt3(3,2) = geinv(1,3)*gpt2(1,2) + geinv(2,3)*gpt2(2,2) + geinv(3,3)*gpt2(3,2) 
+                          gpt3(3,3) = geinv(1,3)*gpt2(1,3) + geinv(2,3)*gpt2(2,3) + geinv(3,3)*gpt2(3,3) 
+
+
+                          gpt4(1,1) = gpt3(1,1)*geinv(1,1) + gpt3(1,2)*geinv(2,1) + gpt3(1,3)*geinv(3,1) 
+                          gpt4(1,2) = gpt3(1,1)*geinv(1,2) + gpt3(1,2)*geinv(2,2) + gpt3(1,3)*geinv(3,2) 
+                          gpt4(1,3) = gpt3(1,1)*geinv(1,3) + gpt3(1,2)*geinv(2,3) + gpt3(1,3)*geinv(3,3)
+ 
+                          gpt4(2,1) = gpt3(2,1)*geinv(1,1) + gpt3(2,2)*geinv(2,1) + gpt3(2,3)*geinv(3,1) 
+                          gpt4(2,2) = gpt3(2,1)*geinv(1,2) + gpt3(2,2)*geinv(2,2) + gpt3(2,3)*geinv(3,2) 
+                          gpt4(2,3) = gpt3(2,1)*geinv(1,3) + gpt3(2,2)*geinv(2,3) + gpt3(2,3)*geinv(3,3) 
+
+                          gpt4(3,1) = gpt3(3,1)*geinv(1,1) + gpt3(3,2)*geinv(2,1) + gpt3(3,3)*geinv(3,1) 
+                          gpt4(3,2) = gpt3(3,1)*geinv(1,2) + gpt3(3,2)*geinv(2,2) + gpt3(3,3)*geinv(3,2) 
+                          gpt4(3,3) = gpt3(3,1)*geinv(1,3) + gpt3(3,2)*geinv(2,3) + gpt3(3,3)*geinv(3,3) 
+
+
+                          ! gpt4(1,1) = gpt3(1,1)*geinv(1,1) + gpt3(2,1)*geinv(2,1) + gpt3(3,1)*geinv(3,1) 
+                          ! gpt4(1,2) = gpt3(1,1)*geinv(1,2) + gpt3(2,1)*geinv(2,2) + gpt3(3,1)*geinv(3,2) 
+                          ! gpt4(1,3) = gpt3(1,1)*geinv(1,3) + gpt3(2,1)*geinv(2,3) + gpt3(3,1)*geinv(3,3)
+ 
+                          ! gpt4(2,1) = gpt3(1,2)*geinv(1,1) + gpt3(2,2)*geinv(2,1) + gpt3(3,2)*geinv(3,1) 
+                          ! gpt4(2,2) = gpt3(1,2)*geinv(1,2) + gpt3(2,2)*geinv(2,2) + gpt3(3,2)*geinv(3,2) 
+                          ! gpt4(2,3) = gpt3(1,2)*geinv(1,3) + gpt3(2,2)*geinv(2,3) + gpt3(3,2)*geinv(3,3) 
+
+                          ! gpt4(3,1) = gpt3(1,3)*geinv(1,1) + gpt3(2,3)*geinv(2,1) + gpt3(3,3)*geinv(3,1) 
+                          ! gpt4(3,2) = gpt3(1,3)*geinv(1,2) + gpt3(2,3)*geinv(2,2) + gpt3(3,3)*geinv(3,2) 
+                          ! gpt4(3,3) = gpt3(1,3)*geinv(1,3) + gpt3(2,3)*geinv(2,3) + gpt3(3,3)*geinv(3,3) 
+
+
+                          gpt2(1,1) = gpt4(1,1)
+                          gpt2(1,2) = gpt4(1,2)
+                          gpt2(1,3) = gpt4(1,3)
+                          gpt2(2,1) = gpt4(2,1)
+                          gpt2(2,2) = gpt4(2,2)
+                          gpt2(2,3) = gpt4(2,3)
+                          gpt2(3,1) = gpt4(3,1)
+                          gpt2(3,2) = gpt4(3,2)
+                          gpt2(3,3) = gpt4(3,3)
 
                        else
-                          gpt1(1,1) = gpfull(i,j,k,1)*gedlt(1,1) + gpfull(i,j,k,2)*gedlt(2,1) + gpfull(i,j,k,3)*gedlt(3,1) 
-                          gpt1(1,2) = gpfull(i,j,k,1)*gedlt(1,2) + gpfull(i,j,k,2)*gedlt(2,2) + gpfull(i,j,k,3)*gedlt(3,2) 
-                          gpt1(1,3) = gpfull(i,j,k,1)*gedlt(1,3) + gpfull(i,j,k,2)*gedlt(2,3) + gpfull(i,j,k,3)*gedlt(3,3) 
+                          ! !old good
+                          ! gpt1(1,1) = gpfull(i,j,k,1)*gedlt(1,1) + gpfull(i,j,k,2)*gedlt(2,1) + gpfull(i,j,k,3)*gedlt(3,1) 
+                          ! gpt1(1,2) = gpfull(i,j,k,1)*gedlt(1,2) + gpfull(i,j,k,2)*gedlt(2,2) + gpfull(i,j,k,3)*gedlt(3,2) 
+                          ! gpt1(1,3) = gpfull(i,j,k,1)*gedlt(1,3) + gpfull(i,j,k,2)*gedlt(2,3) + gpfull(i,j,k,3)*gedlt(3,3) 
 
-                          gpt1(2,1) = gpfull(i,j,k,4)*gedlt(1,1) + gpfull(i,j,k,5)*gedlt(2,1) + gpfull(i,j,k,6)*gedlt(3,1) 
-                          gpt1(2,2) = gpfull(i,j,k,4)*gedlt(1,2) + gpfull(i,j,k,5)*gedlt(2,2) + gpfull(i,j,k,6)*gedlt(3,2) 
-                          gpt1(2,3) = gpfull(i,j,k,4)*gedlt(1,3) + gpfull(i,j,k,5)*gedlt(2,3) + gpfull(i,j,k,6)*gedlt(3,3) 
+                          ! gpt1(2,1) = gpfull(i,j,k,4)*gedlt(1,1) + gpfull(i,j,k,5)*gedlt(2,1) + gpfull(i,j,k,6)*gedlt(3,1) 
+                          ! gpt1(2,2) = gpfull(i,j,k,4)*gedlt(1,2) + gpfull(i,j,k,5)*gedlt(2,2) + gpfull(i,j,k,6)*gedlt(3,2) 
+                          ! gpt1(2,3) = gpfull(i,j,k,4)*gedlt(1,3) + gpfull(i,j,k,5)*gedlt(2,3) + gpfull(i,j,k,6)*gedlt(3,3) 
 
-                          gpt1(3,1) = gpfull(i,j,k,7)*gedlt(1,1) + gpfull(i,j,k,8)*gedlt(2,1) + gpfull(i,j,k,9)*gedlt(3,1) 
-                          gpt1(3,2) = gpfull(i,j,k,7)*gedlt(1,2) + gpfull(i,j,k,8)*gedlt(2,2) + gpfull(i,j,k,9)*gedlt(3,2) 
-                          gpt1(3,3) = gpfull(i,j,k,7)*gedlt(1,3) + gpfull(i,j,k,8)*gedlt(2,3) + gpfull(i,j,k,9)*gedlt(3,3) 
+                          ! gpt1(3,1) = gpfull(i,j,k,7)*gedlt(1,1) + gpfull(i,j,k,8)*gedlt(2,1) + gpfull(i,j,k,9)*gedlt(3,1) 
+                          ! gpt1(3,2) = gpfull(i,j,k,7)*gedlt(1,2) + gpfull(i,j,k,8)*gedlt(2,2) + gpfull(i,j,k,9)*gedlt(3,2) 
+                          ! gpt1(3,3) = gpfull(i,j,k,7)*gedlt(1,3) + gpfull(i,j,k,8)*gedlt(2,3) + gpfull(i,j,k,9)*gedlt(3,3) 
+
+
+                          ! gpt2(1,1) = gpt1(1,1)*geinv(1,1) + gpt1(1,2)*geinv(2,1) + gpt1(1,3)*geinv(3,1)
+                          ! gpt2(1,2) = gpt1(1,1)*geinv(1,2) + gpt1(1,2)*geinv(2,2) + gpt1(1,3)*geinv(3,2)
+                          ! gpt2(1,3) = gpt1(1,1)*geinv(1,3) + gpt1(1,2)*geinv(2,3) + gpt1(1,3)*geinv(3,3)
+
+                          ! gpt2(2,1) = gpt1(2,1)*geinv(1,1) + gpt1(2,2)*geinv(2,1) + gpt1(2,3)*geinv(3,1)
+                          ! gpt2(2,2) = gpt1(2,1)*geinv(1,2) + gpt1(2,2)*geinv(2,2) + gpt1(2,3)*geinv(3,2)
+                          ! gpt2(2,3) = gpt1(2,1)*geinv(1,3) + gpt1(2,2)*geinv(2,3) + gpt1(2,3)*geinv(3,3)
+
+                          ! gpt2(3,1) = gpt1(3,1)*geinv(1,1) + gpt1(3,2)*geinv(2,1) + gpt1(3,3)*geinv(3,1)
+                          ! gpt2(3,2) = gpt1(3,1)*geinv(1,2) + gpt1(3,2)*geinv(2,2) + gpt1(3,3)*geinv(3,2)
+                          ! gpt2(3,3) = gpt1(3,1)*geinv(1,3) + gpt1(3,2)*geinv(2,3) + gpt1(3,3)*geinv(3,3)
+
+
+                          !new
+                          gpt1(1,1) = gpfull(i,j,k,1)*gfull(i,j,k,1) + gpfull(i,j,k,2)*gfull(i,j,k,4) + gpfull(i,j,k,3)*gfull(i,j,k,7) 
+                          gpt1(1,2) = gpfull(i,j,k,1)*gfull(i,j,k,2) + gpfull(i,j,k,2)*gfull(i,j,k,5) + gpfull(i,j,k,3)*gfull(i,j,k,8) 
+                          gpt1(1,3) = gpfull(i,j,k,1)*gfull(i,j,k,3) + gpfull(i,j,k,2)*gfull(i,j,k,6) + gpfull(i,j,k,3)*gfull(i,j,k,9) 
+
+                          gpt1(2,1) = gpfull(i,j,k,4)*gfull(i,j,k,1) + gpfull(i,j,k,5)*gfull(i,j,k,4) + gpfull(i,j,k,6)*gfull(i,j,k,7) 
+                          gpt1(2,2) = gpfull(i,j,k,4)*gfull(i,j,k,2) + gpfull(i,j,k,5)*gfull(i,j,k,5) + gpfull(i,j,k,6)*gfull(i,j,k,8) 
+                          gpt1(2,3) = gpfull(i,j,k,4)*gfull(i,j,k,3) + gpfull(i,j,k,5)*gfull(i,j,k,6) + gpfull(i,j,k,6)*gfull(i,j,k,9) 
+
+                          gpt1(3,1) = gpfull(i,j,k,7)*gfull(i,j,k,1) + gpfull(i,j,k,8)*gfull(i,j,k,4) + gpfull(i,j,k,9)*gfull(i,j,k,7) 
+                          gpt1(3,2) = gpfull(i,j,k,7)*gfull(i,j,k,2) + gpfull(i,j,k,8)*gfull(i,j,k,5) + gpfull(i,j,k,9)*gfull(i,j,k,8) 
+                          gpt1(3,3) = gpfull(i,j,k,7)*gfull(i,j,k,3) + gpfull(i,j,k,8)*gfull(i,j,k,6) + gpfull(i,j,k,9)*gfull(i,j,k,9) 
 
 
                           gpt2(1,1) = gpt1(1,1)*geinv(1,1) + gpt1(1,2)*geinv(2,1) + gpt1(1,3)*geinv(3,1)
@@ -616,16 +723,27 @@ contains
                        endif
 
                        !update plastic g
-                       gpfull(i,j,k,1) = gpfull(i,j,k,1) - gpt2(1,1)
-                       gpfull(i,j,k,2) = gpfull(i,j,k,2) - gpt2(1,2)
-                       gpfull(i,j,k,3) = gpfull(i,j,k,3) - gpt2(1,3)
-                       gpfull(i,j,k,4) = gpfull(i,j,k,4) - gpt2(2,1)
-                       gpfull(i,j,k,5) = gpfull(i,j,k,5) - gpt2(2,2)
-                       gpfull(i,j,k,6) = gpfull(i,j,k,6) - gpt2(2,3)
-                       gpfull(i,j,k,7) = gpfull(i,j,k,7) - gpt2(3,1)
-                       gpfull(i,j,k,8) = gpfull(i,j,k,8) - gpt2(3,2)
-                       gpfull(i,j,k,9) = gpfull(i,j,k,9) - gpt2(3,3)
+                       ! !old
+                       ! gpfull(i,j,k,1) = gpfull(i,j,k,1) - gpt2(1,1)
+                       ! gpfull(i,j,k,2) = gpfull(i,j,k,2) - gpt2(1,2)
+                       ! gpfull(i,j,k,3) = gpfull(i,j,k,3) - gpt2(1,3)
+                       ! gpfull(i,j,k,4) = gpfull(i,j,k,4) - gpt2(2,1)
+                       ! gpfull(i,j,k,5) = gpfull(i,j,k,5) - gpt2(2,2)
+                       ! gpfull(i,j,k,6) = gpfull(i,j,k,6) - gpt2(2,3)
+                       ! gpfull(i,j,k,7) = gpfull(i,j,k,7) - gpt2(3,1)
+                       ! gpfull(i,j,k,8) = gpfull(i,j,k,8) - gpt2(3,2)
+                       ! gpfull(i,j,k,9) = gpfull(i,j,k,9) - gpt2(3,3)
 
+                       !new
+                       gpfull(i,j,k,1) = gpt2(1,1)
+                       gpfull(i,j,k,2) = gpt2(1,2)
+                       gpfull(i,j,k,3) = gpt2(1,3)
+                       gpfull(i,j,k,4) = gpt2(2,1)
+                       gpfull(i,j,k,5) = gpt2(2,2)
+                       gpfull(i,j,k,6) = gpt2(2,3)
+                       gpfull(i,j,k,7) = gpt2(3,1)
+                       gpfull(i,j,k,8) = gpt2(3,2)
+                       gpfull(i,j,k,9) = gpt2(3,3)
 
 
                        !for plastic entropy
@@ -685,8 +803,9 @@ contains
                        endif
 
                        !update pe -- note this is called after g and pe are converted back to primitive
-                       !pe(i,j,k) =  pe(i,j,k) + (almsn-almsn0) !compare this with e_p and e_pp
-                       pe(i,j,k) =  pe(i,j,k) + (almsn-almsn0)*yieldlocal(i,j,k)/Temp(i,j,k) !correct dimensions for entropy
+                       !pe(i,j,k) =  pe(i,j,k) + (almsn-almsn0) !correct dimensinos for strain - compare this with e_p and e_pp
+                       pe(i,j,k) =  pe(i,j,k) + (almsn-almsn0)*yieldlocal(i,j,k) !correct dimensions for energy
+                       !pe(i,j,k) =  pe(i,j,k) + (almsn-almsn0)*yieldlocal(i,j,k)/Temp(i,j,k) !correct dimensions for entropy
 
                     endif
 
