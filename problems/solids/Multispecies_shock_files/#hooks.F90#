@@ -669,46 +669,44 @@ subroutine hook_output(decomp,der,dx,dy,dz,outputdir,mesh,fields,mix,tsim,vizcou
            close(outputunit)
         endif
 
-        if(.false.) then !write P3D
-           nfcns=15 + 50*2
-           write(str2,*) vizcount
-           str2 = adjustl(str2)
-           !write(outputfile,'(4A,I4.4,A)') trim(outputdir),"/P3D_MSS_",trim(str),"_",vizcount,".fcn"
-           write(outputfile,'(6A)') trim(outputdir),"/P3D_MSS_",trim(str),"_",trim(str2),".fcn"
-           open(unit=outputunit, file=trim(outputfile), form='UNFORMATTED', status='replace')
+        nfcns=15 + 50*2
+        write(str2,*) vizcount
+        str2 = adjustl(str2)
+        !write(outputfile,'(4A,I4.4,A)') trim(outputdir),"/P3D_MSS_",trim(str),"_",vizcount,".fcn"
+        write(outputfile,'(6A)') trim(outputdir),"/P3D_MSS_",trim(str),"_",trim(str2),".fcn"
+        open(unit=outputunit, file=trim(outputfile), form='UNFORMATTED', status='replace')
            write(outputunit) decomp%xsz(1),decomp%ysz(2),decomp%zsz(3),decomp%yst(1),decomp%yen(1),decomp%yst(2),decomp%yen(2),decomp%yst(3),decomp%yen(3) !global nx,ny,nz -- ist,ien,jst,jen,kst,ken
-           write(outputunit) decomp%ysz(1),decomp%ysz(2),decomp%ysz(3),nfcns !local nx,ny,nz, nfunctions
-           write(outputunit) rho,u,v,w,e,p,sxx,sxy,sxz,syy,syz,szz,mu,bulk,kap, & !15
-                !material 1
-                mix%material(1)%p, mix%material(1)%T, mix%material(1)%Ys, mix%material(1)%VF, mix%material(1)%eh, mix%material(1)%eel, &
-                mix%material(1)%elastic%mu, mix%material(1)%elastic%yield, mix%material(1)%e_p, mix%material(1)%e_pp, mix%material(1)%pe, & !11
-                mix%material(1)%g11, mix%material(1)%g12, mix%material(1)%g13, & !27
-                mix%material(1)%g21, mix%material(1)%g22, mix%material(1)%g23, &
-                mix%material(1)%g31, mix%material(1)%g32, mix%material(1)%g33, &
-                mix%material(1)%gt11, mix%material(1)%gt12, mix%material(1)%gt13, &
-                mix%material(1)%gt21, mix%material(1)%gt22, mix%material(1)%gt23, &
-                mix%material(1)%gt31, mix%material(1)%gt32, mix%material(1)%gt33, &
-                mix%material(1)%gp11, mix%material(1)%gp12, mix%material(1)%gp13, &
-                mix%material(1)%gp21, mix%material(1)%gp22, mix%material(1)%gp23, &
-                mix%material(1)%gp31, mix%material(1)%gp32, mix%material(1)%gp33, &
-                mix%material(1)%kap, mix%material(1)%diff, mix%material(1)%diff_g, mix%material(1)%diff_gt, mix%material(1)%diff_gp, mix%material(1)%diff_pe,& !12
-                mix%material(1)%det_e, mix%material(1)%det_p, mix%material(1)%det_t, mix%material(1)%curl_e, mix%material(1)%curl_p, mix%material(1)%curl_t, &
-                !material 2
-                mix%material(2)%p, mix%material(2)%T, mix%material(2)%Ys, mix%material(2)%VF, mix%material(2)%eh, mix%material(2)%eel, &
-                mix%material(2)%elastic%mu, mix%material(2)%elastic%yield, mix%material(2)%e_p, mix%material(2)%e_pp, mix%material(2)%pe, & !11
-                mix%material(2)%g11, mix%material(2)%g12, mix%material(2)%g13, & !27
-                mix%material(2)%g21, mix%material(2)%g22, mix%material(2)%g23, &
-                mix%material(2)%g31, mix%material(2)%g32, mix%material(2)%g33, &
-                mix%material(2)%gt11, mix%material(2)%gt12, mix%material(2)%gt13, &
-                mix%material(2)%gt21, mix%material(2)%gt22, mix%material(2)%gt23, &
-                mix%material(2)%gt31, mix%material(2)%gt32, mix%material(2)%gt33, &
-                mix%material(2)%gp11, mix%material(2)%gp12, mix%material(2)%gp13, &
-                mix%material(2)%gp21, mix%material(2)%gp22, mix%material(2)%gp23, &
-                mix%material(2)%gp31, mix%material(2)%gp32, mix%material(2)%gp33, &
-                mix%material(2)%kap, mix%material(2)%diff, mix%material(2)%diff_g, mix%material(2)%diff_gt, mix%material(2)%diff_gp, mix%material(2)%diff_pe,& !12
-                mix%material(2)%det_e, mix%material(2)%det_p, mix%material(2)%det_t, mix%material(2)%curl_e, mix%material(2)%curl_p, mix%material(2)%curl_t
-           close(outputunit)
-        endif
+        write(outputunit) decomp%ysz(1),decomp%ysz(2),decomp%ysz(3),nfcns !local nx,ny,nz, nfunctions
+        write(outputunit) rho,u,v,w,e,p,sxx,sxy,sxz,syy,syz,szz,mu,bulk,kap, & !15
+                          !material 1
+                          mix%material(1)%p, mix%material(1)%T, mix%material(1)%Ys, mix%material(1)%VF, mix%material(1)%eh, mix%material(1)%eel, &
+                          mix%material(1)%elastic%mu, mix%material(1)%elastic%yield, mix%material(1)%e_p, mix%material(1)%e_pp, mix%material(1)%pe, & !11
+                          mix%material(1)%g11, mix%material(1)%g12, mix%material(1)%g13, & !27
+                          mix%material(1)%g21, mix%material(1)%g22, mix%material(1)%g23, &
+                          mix%material(1)%g31, mix%material(1)%g32, mix%material(1)%g33, &
+                          mix%material(1)%gt11, mix%material(1)%gt12, mix%material(1)%gt13, &
+                          mix%material(1)%gt21, mix%material(1)%gt22, mix%material(1)%gt23, &
+                          mix%material(1)%gt31, mix%material(1)%gt32, mix%material(1)%gt33, &
+                          mix%material(1)%gp11, mix%material(1)%gp12, mix%material(1)%gp13, &
+                          mix%material(1)%gp21, mix%material(1)%gp22, mix%material(1)%gp23, &
+                          mix%material(1)%gp31, mix%material(1)%gp32, mix%material(1)%gp33, &
+                          mix%material(1)%kap, mix%material(1)%diff, mix%material(1)%diff_g, mix%material(1)%diff_gt, mix%material(1)%diff_gp, mix%material(1)%diff_pe,& !12
+                          mix%material(1)%det_e, mix%material(1)%det_p, mix%material(1)%det_t, mix%material(1)%curl_e, mix%material(1)%curl_p, mix%material(1)%curl_t, &
+                          !material 2
+                          mix%material(2)%p, mix%material(2)%T, mix%material(2)%Ys, mix%material(2)%VF, mix%material(2)%eh, mix%material(2)%eel, &
+                          mix%material(2)%elastic%mu, mix%material(2)%elastic%yield, mix%material(2)%e_p, mix%material(2)%e_pp, mix%material(2)%pe, & !11
+                          mix%material(2)%g11, mix%material(2)%g12, mix%material(2)%g13, & !27
+                          mix%material(2)%g21, mix%material(2)%g22, mix%material(2)%g23, &
+                          mix%material(2)%g31, mix%material(2)%g32, mix%material(2)%g33, &
+                          mix%material(2)%gt11, mix%material(2)%gt12, mix%material(2)%gt13, &
+                          mix%material(2)%gt21, mix%material(2)%gt22, mix%material(2)%gt23, &
+                          mix%material(2)%gt31, mix%material(2)%gt32, mix%material(2)%gt33, &
+                          mix%material(2)%gp11, mix%material(2)%gp12, mix%material(2)%gp13, &
+                          mix%material(2)%gp21, mix%material(2)%gp22, mix%material(2)%gp23, &
+                          mix%material(2)%gp31, mix%material(2)%gp32, mix%material(2)%gp33, &
+                          mix%material(2)%kap, mix%material(2)%diff, mix%material(2)%diff_g, mix%material(2)%diff_gt, mix%material(2)%diff_gp, mix%material(2)%diff_pe,& !12
+                          mix%material(2)%det_e, mix%material(2)%det_p, mix%material(2)%det_t, mix%material(2)%curl_e, mix%material(2)%curl_p, mix%material(2)%curl_t
+        close(outputunit)
 
     end associate
 end subroutine

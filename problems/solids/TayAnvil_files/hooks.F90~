@@ -20,8 +20,8 @@ module TayAnvil_data
     logical     :: explPlast = .FALSE., explPlast2 = .FALSE.
     logical     :: plastic = .FALSE., plastic2 = .FALSE.
     logical     :: strainHard = .FALSE., strainHard2 = .FALSE.
-    real(rkind) :: Ly = 30.0d0, Lx = 10.0d0, interface_init = 0.75_rkind, shock_init = 0.6_rkind, kwave = 4.0_rkind
-    !real(rkind) :: Ly = 30.0d0, Lx = 30.0d0, interface_init = 0.75_rkind, shock_init = 0.6_rkind, kwave = 4.0_rkind
+    !real(rkind) :: Ly = 30.0d0, Lx = 10.0d0, interface_init = 0.75_rkind, shock_init = 0.6_rkind, kwave = 4.0_rkind
+    real(rkind) :: Ly = 30.0d0, Lx = 30.0d0, interface_init = 0.75_rkind, shock_init = 0.6_rkind, kwave = 4.0_rkind
 
     type(filters) :: mygfil
 
